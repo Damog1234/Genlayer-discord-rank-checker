@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Discord Rank Tracker | GenLayer</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🏆 Discord Rank Tracker</h1>
+    <p class="subtitle">Powered by GenLayer AI Smart Contracts</p>
+
+    <div class="input-group">
+      <input type="text" id="username" placeholder="Enter Discord Username (e.g. user#1234)">
+      <button id="viewBtn" onclick="getStats()">View Stats</button>
+    </div>
+
+    <div id="loading" class="hidden">🤖 AI Validators are checking the web...</div>
+
+    <div id="statsCard" class="card hidden">
+      <h2 id="displayUser">Username</h2>
+      <div class="stat-box">
+        <div class="stat"><span>Level:</span> <strong id="level">--</strong></div>
+        <div class="stat"><span>Rank:</span> <strong id="rank">--</strong></div>
+        <div class="stat"><span>Role:</span> <strong id="role">--</strong></div>
+      </div>
+      <button class="update-btn" onclick="fetchNewData()">Update from Discord (Requires Wallet)</button>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
