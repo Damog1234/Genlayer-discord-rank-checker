@@ -1,0 +1,59 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/genlayer-js@latest/dist/index.bundle.js';
+
+const client = createClient({ chain: 'asimov-testnet' });
+const CONTRACT_ADDRESS = "0xYOUR_CONTRACT_ADDRESS"; 
+const GUILD_ID = "YOUR_SERVER_ID";
+
+// 1. Read existing stats from the blockchain (Free for everyone)
+window.getStats = async () => {
+    const username = document.getElementById('username').value;
+    if(!username) return alert("Enter a name!");
+
+    try {
+        const result = await client.readContract({
+            address: CONTRACT_ADDRESS,
+            functionName: 'get_stats',
+            args: [username]
+        });
+
+        if (result === "User not found") {
+            alert("This user isn't on the blockchain yet. Click 'Update' to fetch them!");
+        } else {
+            const data = JSON.parse(result);
+            displayData(username, data);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+// 2. Fetch new data using AI Validators (Requires MetaMask/Wallet)
+window.fetchNewData = async () => {
+    const username = document.getElementById('username').value;
+    document.getElementById('loading').classList.remove('hidden');
+
+    try {
+        const hash = await client.writeContract({
+            address: CONTRACT_ADDRESS,
+            functionName: 'fetch_user_data',
+            args: [username, GUILD_ID]
+        });
+        
+        // Wait for the AI consensus (takes a few seconds)
+        await client.waitForTransactionReceipt({ hash });
+        alert("Success! AI has verified the stats.");
+        getStats(); // Refresh the display
+    } catch (err) {
+        alert("Transaction failed. Make sure MetaMask is connected to Asimov Testnet.");
+    } finally {
+        document.getElementById('loading').classList.add('hidden');
+    }
+};
+
+function displayData(user, data) {
+    document.getElementById('statsCard').classList.remove('hidden');
+    document.getElementById('displayUser').innerText = user;
+    document.getElementById('level').innerText = data.level;
+    document.getElementById('rank').innerText = data.rank;
+    document.getElementById('role').innerText = data.role;
+}
